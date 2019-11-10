@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/DcmNetTools">
         <file>image/logo.png</file>
+        <file>image/server.png</file>
+        <file>image/terminal.png</file>
+        <file>image/user.png</file>
     </qresource>
 </RCC>

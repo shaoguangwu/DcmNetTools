@@ -13,6 +13,7 @@
 #include <QDesktopServices>
 
 #include "Settings.h"
+#include <QValidator> 
 
 EchoStoreSCU::EchoStoreSCU(QWidget *parent)
     : QWidget(parent)
@@ -20,6 +21,7 @@ EchoStoreSCU::EchoStoreSCU(QWidget *parent)
 {
     ui = new Ui::EchoStoreSCU();
     ui->setupUi(this);
+    setStatus("NotRunning");
 
     initUI();
     connectSignalSlots();
@@ -27,17 +29,28 @@ EchoStoreSCU::EchoStoreSCU(QWidget *parent)
 
 EchoStoreSCU::~EchoStoreSCU()
 {
+    killProcess();
     delete ui;
 }
 
 void EchoStoreSCU::initUI()
 {
+    QRegExp regExpPort("^([0-9]|[1-9]\\d|[1-9]\\d{2}|[1-9]\\d{3}|[1-5]\\d{4}|6[0-4]\\d{3}|65[0-4]\\d{2}|655[0-2]\\d|6553[0-5])$");
+    QValidator* validatorPort = new QRegExpValidator(regExpPort, this);
+    ui->lineEditPort->setValidator(validatorPort);
+    QRegExp regExpIp("^((25[0-5])|(2[0-4]\\d)|(1\\d\\d)|([1-9]\\d)|\\d)(\\.((25[0-5])|(2[0-4]\\d)|(1\\d\\d)|([1-9]\\d)|\\d)){3}$");
+    QValidator* validatorIp = new QRegExpValidator(regExpIp, this);
+    ui->lineEditIP->setValidator(validatorIp);
+
     ui->textEditConsole->setReadOnly(true);
 
     auto set = Settings::getEchoStoreSCUSettings();
     setAETitle(set.aeTitle);
     setIP(set.IP);
     setPort(set.port);
+    setStoreDir(set.dir);
+    setStoreFileNameList(set.fileList);
+    setLogLevel(set.logLevel);
 }
 
 void EchoStoreSCU::connectSignalSlots()
@@ -56,8 +69,14 @@ void EchoStoreSCU::connectSignalSlots()
         this, SLOT(onBtnStoreFilesClicked()));
     connect(ui->btnStoreDir, SIGNAL(clicked()),
         this, SLOT(onBtnStoreDirClicked()));
-    connect(m_process, SIGNAL(readyReadStandardOutput()), 
-        this, SLOT(onProcessReadyReadStandardOutput()));
+    connect(ui->btnStop, SIGNAL(clicked()),
+        this, SLOT(onBtnStopClicked()));
+    //connect(m_process, SIGNAL(readyReadStandardOutput()), 
+    //    this, SLOT(onProcessReadyReadStandardOutput()));
+    connect(m_process, SIGNAL(readyRead()),
+        this, SLOT(onProcessReadyRead()));
+    connect(m_process, SIGNAL(stateChanged(QProcess::ProcessState)),
+        this, SLOT(onProcessStateChanged(QProcess::ProcessState)));
 }
 
 QString EchoStoreSCU::getAETitle() const
@@ -109,9 +128,39 @@ QStringList EchoStoreSCU::getStoreFileNameList() const
     return list;
 }
 
+void EchoStoreSCU::setStoreFileNameList(const QStringList& list)
+{
+    QString text;
+    for (int i = 0; i < list.count(); ++i) {
+        text.append(QDir::toNativeSeparators(list[i]));
+        if (i != list.count() - 1) {
+            text.append("\n");
+        }
+    }
+    ui->textEditFiles->setText(text);
+}
+void EchoStoreSCU::clearStoreFileNameList()
+{
+    ui->textEditFiles->clear();
+}
+
 QString EchoStoreSCU::getStoreDir() const
 {
     return ui->lineEditDir->text();
+}
+void EchoStoreSCU::setStoreDir(const QString& dir)
+{
+    ui->lineEditDir->setText(dir);
+}
+
+QString EchoStoreSCU::getLogLevel() const
+{
+    return ui->lineEditLogLevel->text();
+}
+
+void EchoStoreSCU::setLogLevel(const QString& text)
+{
+    ui->lineEditLogLevel->setText(text);
 }
 
 void EchoStoreSCU::clearTextEditConsole()
@@ -140,13 +189,27 @@ void EchoStoreSCU::startProcess(const QString& program, const QStringList& args)
     m_process->start();
 }
 
+void EchoStoreSCU::setStatus(const QString& text)
+{
+    ui->labelState->setText(text);
+}
+
 void EchoStoreSCU::saveSettings()
 {
     EchoStoreSCUSettings set;
     set.aeTitle = getAETitle();
     set.IP = getIP();
     set.port = getPort();
+    set.dir = getStoreDir();
+    set.fileList = getStoreFileNameList();
+    set.logLevel = getLogLevel();
     Settings::saveEchoStoreSCUSettings(set);
+}
+
+void EchoStoreSCU::killProcess()
+{
+    m_process->kill();
+    m_process->waitForFinished();
 }
 
 void EchoStoreSCU::onBtnChooseFilesClicked()
@@ -155,15 +218,8 @@ void EchoStoreSCU::onBtnChooseFilesClicked()
     if (fileList.isEmpty()) {
         return;
     }
-    QString text;
-    for (int i = 0; i < fileList.count(); ++i) {
-        text.append(fileList[i]);
-        if (i != fileList.count() - 1) {
-            text.append("\n");
-        }
-    }
-    ui->textEditFiles->clear();
-    ui->textEditFiles->setText(text);
+    clearStoreFileNameList();
+    setStoreFileNameList(fileList);
 }
 
 void EchoStoreSCU::onBtnClearOutputClicked()
@@ -178,7 +234,7 @@ void EchoStoreSCU::onBtnChooseDirClicked()
         return;
     }
     ui->lineEditDir->clear();
-    ui->lineEditDir->setText(text);
+    ui->lineEditDir->setText(QDir::toNativeSeparators(text));
 }
 
 void EchoStoreSCU::onBtnSaveOutputToFileClicked()
@@ -210,6 +266,7 @@ void EchoStoreSCU::onBtnSaveOutputToFileClicked()
 
 void EchoStoreSCU::onBtnEchoClicked()
 {
+    killProcess();
     QString program = "bin/echoscu.exe";
     if (!QFile::exists(program)) {
         QMessageBox::warning(this, tr("Error"), tr("Can not find \"echoscu\""));
@@ -222,6 +279,7 @@ void EchoStoreSCU::onBtnEchoClicked()
 }
 void EchoStoreSCU::onBtnStoreFilesClicked()
 {
+    killProcess();
     QString program = "bin/storescu.exe";
     if (!QFile::exists(program)) {
         QMessageBox::warning(this, tr("Error"), tr("Can not find \"storescu\""));
@@ -235,6 +293,7 @@ void EchoStoreSCU::onBtnStoreFilesClicked()
 }
 void EchoStoreSCU::onBtnStoreDirClicked()
 {
+    killProcess();
     QString program = "bin/storescu.exe";
     if (!QFile::exists(program)) {
         QMessageBox::warning(this, tr("Error"), tr("Can not find \"storescu\""));
@@ -244,14 +303,39 @@ void EchoStoreSCU::onBtnStoreDirClicked()
     args << getIP();
     args << getPort();
     args << "-aet" << getAETitle();
-    args << getStoreDir();
+    args << "-ll";
+    args << getLogLevel();
     args << "+sd";
+    args << getStoreDir();
     startProcess(program, args);
 }
 
-void EchoStoreSCU::onProcessReadyReadStandardOutput()
+void EchoStoreSCU::onBtnStopClicked()
+{
+    killProcess();
+}
+
+void EchoStoreSCU::onProcessReadyRead()
 {
     QString text = getCurrentTimeString4Log();
-    text += QString::fromLocal8Bit(m_process->readAllStandardOutput());
+    text += QString::fromLocal8Bit(m_process->readAll());
     appendTextEditConsoleText(text);
+}
+
+void EchoStoreSCU::onProcessStateChanged(QProcess::ProcessState state)
+{
+    switch (state)
+    {
+    case QProcess::NotRunning:
+        setStatus("NotRunning");
+        break;
+    case QProcess::Starting:
+        setStatus("Starting");
+        break;
+    case QProcess::Running:
+        setStatus("Running");
+        break;
+    default:
+        break;
+    }
 }

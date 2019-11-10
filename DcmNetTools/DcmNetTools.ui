@@ -10,6 +10,11 @@
     <height>400</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>微软雅黑</family>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>DcmNetTools</string>
   </property>
@@ -41,7 +46,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Made by Shaoguang. V1.0  </string>
+      <string>Made by Shaoguang. V1.2  </string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

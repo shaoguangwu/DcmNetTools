@@ -40,6 +40,9 @@
     <ClCompile Include="Settings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Terminal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="DcmNetTools.h">
@@ -51,6 +54,9 @@
     <QtMoc Include="EchoStoreSCP.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="Terminal.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="DcmNetTools.ui">
@@ -60,6 +66,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="EchoStoreSCP.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="Terminal.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

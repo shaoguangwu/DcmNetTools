@@ -93,6 +93,7 @@
     <ClCompile Include="EchoStoreSCU.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="Terminal.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="DcmNetTools.h" />
@@ -101,6 +102,7 @@
     <QtUic Include="DcmNetTools.ui" />
     <QtUic Include="EchoStoreSCP.ui" />
     <QtUic Include="EchoStoreSCU.ui" />
+    <QtUic Include="Terminal.ui" />
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="DcmNetTools.qrc" />
@@ -114,6 +116,7 @@
   <ItemGroup>
     <ClInclude Include="resource.h" />
     <ClInclude Include="Settings.h" />
+    <QtMoc Include="Terminal.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DcmNetTools.rc" />

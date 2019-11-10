@@ -4,6 +4,7 @@
 #include "ui_DcmNetTools.h"
 #include "EchoStoreSCU.h"
 #include "EchoStoreSCP.h"
+#include "Terminal.h"
 
 class DcmNetTools : public QWidget
 {
@@ -22,4 +23,5 @@ private:
 
     EchoStoreSCU*   m_echoStoreSCU;
     EchoStoreSCP*   m_echoStoreSCP;
+    Terminal*       m_terminal;
 };
