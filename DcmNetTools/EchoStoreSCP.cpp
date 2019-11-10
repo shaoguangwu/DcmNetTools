@@ -164,7 +164,7 @@ void EchoStoreSCP::onBtnSaveOutpuToFileClicked()
     QDir dir;
     dir.mkdir(logDir);
     QDateTime dt = QDateTime::currentDateTime();
-    QString fileName = logDir + dt.toString("yyyy-MM-dd_hh.mm.ss.zzz") + QString(".output.txt");
+    QString fileName = logDir + dt.toString("yyyy-MM-dd_hh.mm.ss.zzz") + QString(".echostorescp.output.txt");
     QFile file(fileName);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {

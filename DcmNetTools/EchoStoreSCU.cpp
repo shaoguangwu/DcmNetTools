@@ -243,7 +243,7 @@ void EchoStoreSCU::onBtnSaveOutputToFileClicked()
     QDir dir;
     dir.mkdir(logDir);
     QDateTime dt = QDateTime::currentDateTime();
-    QString fileName = logDir + getCurrentTimeString() + QString(".output.txt");
+    QString fileName = logDir + getCurrentTimeString() + QString(".echostorescu.output.txt");
     QString text = getTextEditConsoleText();
     QFile file(fileName);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))

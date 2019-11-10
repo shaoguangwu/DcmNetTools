@@ -112,7 +112,7 @@ void Terminal::onBtnSaveToFileClicked()
     QDir dir;
     dir.mkdir(logDir);
     QDateTime dt = QDateTime::currentDateTime();
-    QString fileName = logDir + dt.toString("yyyy-MM-dd_hh.mm.ss.zzz") + QString(".output.txt");
+    QString fileName = logDir + dt.toString("yyyy-MM-dd_hh.mm.ss.zzz") + QString(".terminal.output.txt");
     QFile file(fileName);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
@@ -249,13 +249,13 @@ void Terminal::onProcessStateChanged(QProcess::ProcessState newState)
     switch (newState)
     {
     case QProcess::NotRunning:
-        setStatus("Process State : Not Runing.");
+        setStatus("Not Runing");
         break;
     case QProcess::Starting:
-        setStatus("Process State : starting.");
+        setStatus("Starting");
         break;
     case QProcess::Running:
-        setStatus("Process State : Runing.");
+        setStatus("Runing");
         break;
     default:
         break;
