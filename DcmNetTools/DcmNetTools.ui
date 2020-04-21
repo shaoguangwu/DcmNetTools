@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>643</width>
+    <height>533</height>
    </rect>
   </property>
   <property name="font">
@@ -33,6 +33,11 @@
    </property>
    <item>
     <widget class="QTabWidget" name="tabWidget">
+     <property name="font">
+      <font>
+       <family>Courier</family>
+      </font>
+     </property>
      <property name="currentIndex">
       <number>-1</number>
      </property>
@@ -46,7 +51,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Made by Shaoguang. V1.2  </string>
+      <string>Made by Shaoguang. V1.3  </string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

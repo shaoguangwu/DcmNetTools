@@ -9,6 +9,10 @@ DcmNetTools::DcmNetTools(QWidget *parent)
 
 void DcmNetTools::initUI()
 {
+    QFont font = this->font();
+    font.setFamily("Courier");
+    this->setFont(font);
+
     this->setWindowIcon(QIcon(":/DcmNetTools/image/logo.png"));
     ui.tabWidget->clear();
 

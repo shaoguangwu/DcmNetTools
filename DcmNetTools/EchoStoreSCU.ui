@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>764</width>
-    <height>445</height>
+    <width>720</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="font">
    <font>
-    <family>微软雅黑</family>
+    <family>Courier</family>
    </font>
   </property>
   <property name="windowTitle">
@@ -26,7 +26,7 @@
        <item>
         <widget class="QLabel" name="label_7">
          <property name="text">
-          <string>State       :</string>
+          <string>State    :</string>
          </property>
         </widget>
        </item>
@@ -34,20 +34,20 @@
         <widget class="QLabel" name="label">
          <property name="font">
           <font>
-           <family>微软雅黑</family>
+           <family>Courier</family>
            <weight>50</weight>
            <bold>false</bold>
           </font>
          </property>
          <property name="text">
-          <string>AE Title  :</string>
+          <string>AE Title :</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="label_8">
          <property name="text">
-          <string>LogLevel:</string>
+          <string>Log Level:</string>
          </property>
         </widget>
        </item>
@@ -55,13 +55,13 @@
         <widget class="QLabel" name="label_2">
          <property name="font">
           <font>
-           <family>微软雅黑</family>
+           <family>Courier</family>
            <weight>50</weight>
            <bold>false</bold>
           </font>
          </property>
          <property name="text">
-          <string>SCP IP    :</string>
+          <string>SCP IP   :</string>
          </property>
         </widget>
        </item>
@@ -69,13 +69,13 @@
         <widget class="QLabel" name="label_3">
          <property name="font">
           <font>
-           <family>微软雅黑</family>
+           <family>Courier</family>
            <weight>50</weight>
            <bold>false</bold>
           </font>
          </property>
          <property name="text">
-          <string>SCP Port:</string>
+          <string>SCP Port :</string>
          </property>
         </widget>
        </item>
@@ -118,13 +118,13 @@
         <widget class="QLabel" name="label_4">
          <property name="font">
           <font>
-           <family>微软雅黑</family>
+           <family>Courier</family>
            <weight>50</weight>
            <bold>false</bold>
           </font>
          </property>
          <property name="text">
-          <string>Files        :</string>
+          <string>Files    :</string>
          </property>
         </widget>
        </item>
@@ -146,13 +146,13 @@
         <widget class="QLabel" name="label_5">
          <property name="font">
           <font>
-           <family>微软雅黑</family>
+           <family>Courier</family>
            <weight>50</weight>
            <bold>false</bold>
           </font>
          </property>
          <property name="text">
-          <string>Dir           :</string>
+          <string>Dir      :</string>
          </property>
         </widget>
        </item>
@@ -174,13 +174,8 @@
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="QLabel" name="label_6">
-       <property name="font">
-        <font>
-         <family>微软雅黑</family>
-        </font>
-       </property>
        <property name="text">
-        <string>Output   :</string>
+        <string>Log      :</string>
        </property>
       </widget>
      </item>
@@ -218,13 +213,13 @@ color: rgb(223, 223, 223);</string>
       <widget class="QPushButton" name="btnClearOutput">
        <property name="font">
         <font>
-         <family>微软雅黑</family>
+         <family>Courier</family>
          <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
        <property name="text">
-        <string>Clear Output</string>
+        <string>Clear Log</string>
        </property>
       </widget>
      </item>
@@ -232,13 +227,13 @@ color: rgb(223, 223, 223);</string>
       <widget class="QPushButton" name="btnSaveOuputToFile">
        <property name="font">
         <font>
-         <family>微软雅黑</family>
+         <family>Courier</family>
          <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
        <property name="text">
-        <string>Save Ouput To File</string>
+        <string>Save Log</string>
        </property>
       </widget>
      </item>
@@ -319,7 +314,7 @@ color: rgb(223, 223, 223);</string>
       <widget class="QPushButton" name="btnEcho">
        <property name="font">
         <font>
-         <family>微软雅黑</family>
+         <family>Courier</family>
          <weight>75</weight>
          <bold>true</bold>
         </font>
@@ -366,7 +361,7 @@ color: rgb(223, 223, 223);</string>
       <widget class="QPushButton" name="btnStoreFiles">
        <property name="font">
         <font>
-         <family>微软雅黑</family>
+         <family>Courier</family>
          <weight>75</weight>
          <bold>true</bold>
         </font>
@@ -383,7 +378,7 @@ color: rgb(223, 223, 223);</string>
       <widget class="QPushButton" name="btnStoreDir">
        <property name="font">
         <font>
-         <family>微软雅黑</family>
+         <family>Courier</family>
          <weight>75</weight>
          <bold>true</bold>
         </font>

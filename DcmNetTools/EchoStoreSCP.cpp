@@ -90,13 +90,23 @@ void EchoStoreSCP::start()
         QStringList args;
         args << "-aet";
         args << getAETitle();
-        args << getPort();
         args << "-od";
         args << dataDir;
         args << "-ll";
         args << getLogLevel();
-        args << "-od";
-        args << outDir;
+        //args << "+B";
+        //args << "+F";
+        args << getPort();
+
+        QString parameter("parameter: ");
+        parameter += program;
+        for (const auto& arg : args) {
+            parameter += ' ';
+            parameter += arg;
+        }
+        appendOutputText(parameter);
+        appendOutputText("");
+
         m_process->start(program, args);
     }
 }

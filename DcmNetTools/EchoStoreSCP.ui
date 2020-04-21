@@ -12,7 +12,7 @@
   </property>
   <property name="font">
    <font>
-    <family>微软雅黑</family>
+    <family>Courier</family>
    </font>
   </property>
   <property name="windowTitle">
@@ -26,35 +26,35 @@
        <item>
         <widget class="QLabel" name="label_4">
          <property name="text">
-          <string>State       :</string>
+          <string>State    :</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>AE Title   :</string>
+          <string>AE Title :</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="label_2">
          <property name="text">
-          <string>Port         :</string>
+          <string>Port     :</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="label_6">
          <property name="text">
-          <string>Out Dir    :</string>
+          <string>Out Dir  :</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="label_5">
          <property name="text">
-          <string>LogLevel:</string>
+          <string>Log Level:</string>
          </property>
         </widget>
        </item>
@@ -107,7 +107,7 @@
        <item>
         <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>Output    :</string>
+          <string>Log      :</string>
          </property>
         </widget>
        </item>
@@ -159,14 +159,14 @@ color: rgb(223, 223, 223);</string>
      <item>
       <widget class="QPushButton" name="btnClearOutput">
        <property name="text">
-        <string>Clear Output</string>
+        <string>Clear Log</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="btnSaveOutpuToFile">
        <property name="text">
-        <string>Save Output To File</string>
+        <string>Save Log</string>
        </property>
       </widget>
      </item>
