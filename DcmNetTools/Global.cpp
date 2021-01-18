@@ -69,7 +69,8 @@ void Settings::saveEchoStoreSCUSettings(const EchoStoreSCUSettings& settings)
 EchoStoreSCUSettings Settings::getEchoStoreSCUSettings()
 {
     EchoStoreSCUSettings settings;
-    QSettings setting(g_dcmNetToolsRecordFileName, g_dcmNetToolsRecordFileFormat);
+    QSettings setting(Global::configurePath() + "/" + g_dcmNetToolsRecordFileName,
+                      g_dcmNetToolsRecordFileFormat);
     setting.beginGroup(g_echoStoreSCUIniGroupName);
     settings.aeTitle = setting.value(g_echoStoreSCUIniValueAETitle, "EchoStoreSCU").toString();
     settings.IP = setting.value(g_echoStoreSCUIniValueIP, "127.0.0.1").toString();
@@ -92,7 +93,8 @@ EchoStoreSCUSettings Settings::getEchoStoreSCUSettings()
 
 void Settings::saveEchoStoreSCPSettings(const EchoStoreSCPSettings& settings)
 {
-    QSettings setting(g_dcmNetToolsRecordFileName, g_dcmNetToolsRecordFileFormat);
+    QSettings setting(Global::configurePath() + "/" + g_dcmNetToolsRecordFileName,
+                      g_dcmNetToolsRecordFileFormat);
     setting.beginGroup(g_echoStoreSCPIniGroupName);
     setting.setValue(g_echoStoreSCPIniValueAETitle, settings.aeTitle);
     setting.setValue(g_echoStoreSCPIniValuePort, settings.port);
@@ -104,7 +106,8 @@ void Settings::saveEchoStoreSCPSettings(const EchoStoreSCPSettings& settings)
 EchoStoreSCPSettings Settings::getEchoStoreSCPSettings()
 {
     EchoStoreSCPSettings settings;
-    QSettings setting(g_dcmNetToolsRecordFileName, g_dcmNetToolsRecordFileFormat);
+    QSettings setting(Global::configurePath() + "/" + g_dcmNetToolsRecordFileName,
+                      g_dcmNetToolsRecordFileFormat);
     setting.beginGroup(g_echoStoreSCPIniGroupName);
     settings.aeTitle = setting.value(g_echoStoreSCPIniValueAETitle, "EchoStoreSCP").toString();
     settings.port = setting.value(g_echoStoreSCPIniValuePort, "104").toString();

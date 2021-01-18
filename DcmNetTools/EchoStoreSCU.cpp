@@ -137,6 +137,10 @@ QString EchoStoreSCU::getCurrentTimeString4Log() const
 QStringList EchoStoreSCU::getStoreFileNameList() const
 {
     QString text = ui->textEditFiles->toPlainText();
+    text = text.trimmed();
+    if (text.isEmpty()) {
+        return QStringList();
+    }
     QStringList list = text.split("\n");
     return list;
 }
