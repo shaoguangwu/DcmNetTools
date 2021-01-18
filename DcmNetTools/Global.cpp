@@ -1,6 +1,9 @@
 #include "Global.h"
 #include <QSettings>
 #include <QCoreApplication>
+#include <QFile>
+
+namespace Global {
 
 QSettings::Format g_dcmNetToolsRecordFileFormat = QSettings::IniFormat;
 inline const QString g_dcmNetToolsRecordFileName = "DcmNetToolsRecord.ini";
@@ -20,6 +23,19 @@ inline const QString g_echoStoreSCPIniLogLevel = "LogLevel";
 inline const QString g_echoStoreSCPIniOutDir = "OutputDir";
 inline const QString g_echoStoreSCPIniValuePort = "Port";
 
+inline const QByteArray g_logCfg =
+    "# log4cplus config for DcmNetTools \n"
+    "\n"
+    "log4cplus.rootLogger = DEBUG, console \n"
+    "\n"
+    "log4cplus.appender.console = log4cplus::ConsoleAppender \n"
+    "log4cplus.appender.console.Threshold = INFO \n"
+    "log4cplus.appender.console.logToStderr = true \n"
+    "log4cplus.appender.console.ImmediateFlush = true \n"
+    "log4cplus.appender.console.layout = log4cplus::PatternLayout \n"
+    "log4cplus.appender.console.layout.ConversionPattern = [%p] %D{%Y-%m-%d %H:%M:%S.%q} - %m%n \n"
+    "";
+
 Settings::Settings()
 {
 }
@@ -31,7 +47,8 @@ Settings::~Settings()
 
 void Settings::saveEchoStoreSCUSettings(const EchoStoreSCUSettings& settings)
 {
-    QSettings setting(g_dcmNetToolsRecordFileName, g_dcmNetToolsRecordFileFormat);
+    QSettings setting(Global::configurePath() + "/" + g_dcmNetToolsRecordFileName,
+                      g_dcmNetToolsRecordFileFormat);
     setting.beginGroup(g_echoStoreSCUIniGroupName);
     setting.setValue(g_echoStoreSCUIniValueAETitle, settings.aeTitle);
     setting.setValue(g_echoStoreSCUIniValueIP, settings.IP);
@@ -100,3 +117,46 @@ QString applicationDirPath()
 {
     return QCoreApplication::applicationDirPath();
 }
+
+bool replaceLogLevel(const QString &logFile, const QString &logLevel)
+{
+    QStringList logLevelList;
+    logLevelList << "TRACE";
+    logLevelList << "DEBUG";
+    logLevelList << "INFO";
+    logLevelList << "WARN";
+    logLevelList << "ERROR";
+    logLevelList << "FATAL";
+
+    QString ll = logLevel.trimmed();
+    ll = ll.toUpper();
+    if (!logLevelList.contains(ll)) {
+        ll = logLevelList[0];
+    }
+    logLevelList.removeOne(ll);
+
+    QFile file(logFile);
+    if (!file.open(QIODevice::ReadWrite | QIODevice::Text)) {
+        return false;
+    }
+    QByteArray data = file.readAll();
+    if (data.size() < 50) {
+        data = g_logCfg;
+    }
+    for (auto& s : logLevelList) {
+        data.replace(s.toLocal8Bit(), ll.toLocal8Bit());
+    }
+    file.close();
+
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        return false;
+    }
+    return file.write(data) > 0;
+}
+
+QString configurePath()
+{
+    return QCoreApplication::applicationDirPath() + "/config";
+}
+
+} // namespace Global

@@ -13,7 +13,7 @@
 #include <QDesktopServices>
 
 #include "Global.h"
-#include <QValidator> 
+#include <QValidator>
 
 EchoStoreSCU::EchoStoreSCU(QWidget *parent)
     : QWidget(parent)
@@ -22,6 +22,19 @@ EchoStoreSCU::EchoStoreSCU(QWidget *parent)
     ui = new Ui::EchoStoreSCU();
     ui->setupUi(this);
     setStatus("NotRunning");
+
+    QDir dir;
+    dir.mkdir(Global::configurePath());
+
+#if defined(Q_OS_LINUX)
+    m_program = "echoscu";
+#elif defined(Q_OS_WIN)
+    m_program = QCoreApplication::applicationDirPath() + "/bin/win32/storescu.exe";
+#else
+#endif
+
+    m_echoscuLoggerCfgFile = Global::configurePath() + "/dcmnet-echoscu-logger.cfg";
+    m_storescuLoggerCfgFile = Global::configurePath() + "/dcmnet-storescu-logger.cfg";
 
     initUI();
     connectSignalSlots();
@@ -44,7 +57,7 @@ void EchoStoreSCU::initUI()
 
     ui->textEditConsole->setReadOnly(true);
 
-    auto set = Settings::getEchoStoreSCUSettings();
+    auto set = Global::Settings::getEchoStoreSCUSettings();
     setAETitle(set.aeTitle);
     setIP(set.IP);
     setPort(set.port);
@@ -71,8 +84,8 @@ void EchoStoreSCU::connectSignalSlots()
         this, SLOT(onBtnStoreDirClicked()));
     connect(ui->btnStop, SIGNAL(clicked()),
         this, SLOT(onBtnStopClicked()));
-    //connect(m_process, SIGNAL(readyReadStandardOutput()), 
-    //    this, SLOT(onProcessReadyReadStandardOutput()));
+//    connect(m_process, SIGNAL(readyReadStandardOutput()),
+//        this, SLOT(onProcessReadyReadStandardOutput()));
     connect(m_process, SIGNAL(readyRead()),
         this, SLOT(onProcessReadyRead()));
     connect(m_process, SIGNAL(stateChanged(QProcess::ProcessState)),
@@ -155,7 +168,8 @@ void EchoStoreSCU::setStoreDir(const QString& dir)
 
 QString EchoStoreSCU::getLogLevel() const
 {
-    return ui->lineEditLogLevel->text();
+    QString logLevel = ui->lineEditLogLevel->text();
+    return logLevel.isEmpty() ? "trace" : logLevel;
 }
 
 void EchoStoreSCU::setLogLevel(const QString& text)
@@ -184,9 +198,15 @@ QString EchoStoreSCU::getTextEditConsoleText() const
 
 void EchoStoreSCU::startProcess(const QString& program, const QStringList& args)
 {
-    m_process->setProgram(program);
-    m_process->setArguments(args);
-    m_process->start();
+    QString msg = "## parameter: " + program + " ";
+    for (auto& s : args) {
+        msg += s;
+        msg += " ";
+    }
+    msg.chop(1);
+    appendTextEditConsoleText(msg);
+
+    m_process->start(program, args);
 }
 
 void EchoStoreSCU::setStatus(const QString& text)
@@ -196,14 +216,14 @@ void EchoStoreSCU::setStatus(const QString& text)
 
 void EchoStoreSCU::saveSettings()
 {
-    EchoStoreSCUSettings set;
+    Global::EchoStoreSCUSettings set;
     set.aeTitle = getAETitle();
     set.IP = getIP();
     set.port = getPort();
     set.dir = getStoreDir();
     set.fileList = getStoreFileNameList();
     set.logLevel = getLogLevel();
-    Settings::saveEchoStoreSCUSettings(set);
+    Global::Settings::saveEchoStoreSCUSettings(set);
 }
 
 void EchoStoreSCU::killProcess()
@@ -242,7 +262,6 @@ void EchoStoreSCU::onBtnSaveOutputToFileClicked()
     QString logDir = QCoreApplication::applicationDirPath() + "/log/";
     QDir dir;
     dir.mkdir(logDir);
-    QDateTime dt = QDateTime::currentDateTime();
     QString fileName = logDir + getCurrentTimeString() + QString(".echostorescu.output.txt");
     QString text = getTextEditConsoleText();
     QFile file(fileName);
@@ -267,44 +286,67 @@ void EchoStoreSCU::onBtnSaveOutputToFileClicked()
 void EchoStoreSCU::onBtnEchoClicked()
 {
     killProcess();
-#if defined(Q_OS_LINUX)
-    QString program = QCoreApplication::applicationDirPath() + "/bin/linux/echoscu";
-#elif defined(Q_OS_WIN)
-    QString program = QCoreApplication::applicationDirPath() + "/bin/win32/echoscu.exe";
-#else
-    return;
-#endif
-    if (!QFile::exists(program)) {
-        QMessageBox::warning(this, tr("Error"), tr("Can not find \"echoscu\""));
-        return;
-    }
     QStringList args;
     args << getIP();
     args << getPort();
+
+#ifdef Q_OS_WIN
+    args << "-ll";
+    args << getLogLevel();
+    QString program = QCoreApplication::applicationDirPath() + "/bin/win32/echoscu.exe";
+    if (!QFile::exists(m_program)) {
+        QMessageBox::warning(this, tr("Error"), tr("Can not find \"echoscu\""));
+        return;
+    }
     startProcess(program, args);
+#elif defined(Q_OS_LINUX)
+    args << "-lc";
+    args << m_echoscuLoggerCfgFile;
+    Global::replaceLogLevel(m_echoscuLoggerCfgFile, getLogLevel());
+
+    startProcess("echoscu", args);
+#else
+#endif
 }
 void EchoStoreSCU::onBtnStoreFilesClicked()
 {
     killProcess();
-    QString program = "bin/storescu.exe";
-    if (!QFile::exists(program)) {
+#ifdef Q_OS_WIN
+
+    QStringList args;
+    args << getIP();
+    args << getPort();
+    args << "-ll";
+    args << getLogLevel();
+    args << getStoreFileNameList();
+
+    if (!QFile::exists(m_program)) {
         QMessageBox::warning(this, tr("Error"), tr("Can not find \"storescu\""));
         return;
     }
+    startProcess(m_program, args);
+
+#elif defined(Q_OS_LINUX)
+
     QStringList args;
     args << getIP();
     args << getPort();
     args << getStoreFileNameList();
-    startProcess(program, args);
+
+    args << "-lc";
+    args << m_storescuLoggerCfgFile;
+    Global::replaceLogLevel(m_storescuLoggerCfgFile, getLogLevel());
+
+    startProcess("storescu", args);
+
+#endif
 }
 void EchoStoreSCU::onBtnStoreDirClicked()
 {
     killProcess();
-    QString program = "bin/storescu.exe";
-    if (!QFile::exists(program)) {
-        QMessageBox::warning(this, tr("Error"), tr("Can not find \"storescu\""));
-        return;
-    }
+
+#ifdef Q_OS_WIN
+
     QStringList args;
     args << getIP();
     args << getPort();
@@ -313,7 +355,28 @@ void EchoStoreSCU::onBtnStoreDirClicked()
     args << getLogLevel();
     args << "+sd";
     args << getStoreDir();
-    startProcess(program, args);
+
+    if (!QFile::exists(m_program)) {
+        QMessageBox::warning(this, tr("Error"), tr("Can not find \"storescu\""));
+        return;
+    }
+    startProcess(m_program, args);
+
+#elif defined(Q_OS_LINUX)
+
+    QStringList args;
+    args << getIP();
+    args << getPort();
+    args << "-aet" << getAETitle();
+    args << "-lc";
+    args << m_storescuLoggerCfgFile;
+    args << "+sd";
+    args << getStoreDir();
+    Global::replaceLogLevel(m_storescuLoggerCfgFile, getLogLevel());
+
+    startProcess("storescu", args);
+#else
+#endif
 }
 
 void EchoStoreSCU::onBtnStopClicked()

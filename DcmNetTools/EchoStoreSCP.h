@@ -27,8 +27,8 @@ private slots:
     void onProcessStateChanged(QProcess::ProcessState);
 
 private:
-    void setSettings(const EchoStoreSCPSettings& set);
-    EchoStoreSCPSettings getSettings() const;
+    void setSettings(const Global::EchoStoreSCPSettings& set);
+    Global::EchoStoreSCPSettings getSettings() const;
     void setStatus(const QString& text);
     QString getCurrentTimeString4Log() const;
 
@@ -50,4 +50,6 @@ private:
 private:
     Ui::EchoStoreSCP ui;
     QProcess*   m_process;
+    QString m_program;
+    QString m_echoscpLogCfgFile;
 };

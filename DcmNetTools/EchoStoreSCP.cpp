@@ -18,7 +18,7 @@ EchoStoreSCP::EchoStoreSCP(QWidget *parent)
     : QWidget(parent)
 {
     ui.setupUi(this);
-    setSettings(Settings::getEchoStoreSCPSettings());
+    setSettings(Global::Settings::getEchoStoreSCPSettings());
     setStatus("NotRunning");
 
     QRegExp regExpPort("^([0-9]|[1-9]\\d|[1-9]\\d{2}|[1-9]\\d{3}|[1-5]\\d{4}|6[0-4]\\d{3}|65[0-4]\\d{2}|655[0-2]\\d|6553[0-5])$");
@@ -41,6 +41,17 @@ EchoStoreSCP::EchoStoreSCP(QWidget *parent)
     connect(ui.btnStop, SIGNAL(clicked()), this, SLOT(onBtnStopClicked()));
     connect(ui.btnRestart, SIGNAL(clicked()), this, SLOT(onBtnRestartClicked()));
     connect(ui.btnChooseOutDir, SIGNAL(clicked()), this, SLOT(onBtnChooseOutDirClicked()));
+
+    QDir dir;
+    dir.mkdir(Global::configurePath());
+
+#if defined(Q_OS_LINUX)
+    m_program = "storescp";
+#elif defined(Q_OS_WIN)
+    m_program = QCoreApplication::applicationDirPath() + "/bin/win32/storescp.exe";
+#else
+#endif
+    m_echoscpLogCfgFile = Global::configurePath() + "/dcmnet-storescp-logger.cfg";
 }
 
 EchoStoreSCP::~EchoStoreSCP()
@@ -60,7 +71,8 @@ QString EchoStoreSCP::getPort() const
 
 QString EchoStoreSCP::getLogLevel() const
 {
-    return ui.lineEditLogLevel->text();
+    QString logLevel = ui.lineEditLogLevel->text();
+    return logLevel.isEmpty() ? "trace" : logLevel;
 }
 
 QString EchoStoreSCP::getOutputDir() const
@@ -76,44 +88,45 @@ void EchoStoreSCP::setOutputDir(const QString& text)
 void EchoStoreSCP::start()
 {
     if (m_process->state() == QProcess::NotRunning) {
-#if defined(Q_OS_LINUX)
-        QString program = QCoreApplication::applicationDirPath() + "/bin/linux/storescp";
-#elif defined(Q_OS_WIN)
-        QString program = QCoreApplication::applicationDirPath() + "/bin/win32/storescp.exe";
-#else
-        return;
-#endif
-        if (!QFile::exists(program)) {
-            QMessageBox::warning(this, tr("Error"), tr("Can not find \"storescp\""));
+
+        QString outDir = getOutputDir();
+        QDir dir(outDir);
+        dir.mkpath(outDir);
+
+        if (!dir.exists()) {
+            QMessageBox::warning(this, tr("Error"), tr("Output directory is not exists."));
             return;
         }
 
-        QString outDir = getOutputDir();
-        QString dataDir = "data";
-        QDir dir;
-        dir.mkdir(dataDir);
-        dir.mkdir(outDir);
         QStringList args;
         args << "-aet";
         args << getAETitle();
         args << "-od";
-        args << dataDir;
-        args << "-ll";
-        args << getLogLevel();
+        args << outDir;
         //args << "+B";
         //args << "+F";
         args << getPort();
 
-        QString parameter("parameter: ");
-        parameter += program;
-        for (const auto& arg : args) {
+#ifdef Q_OS_LINUX
+        args << "-lc";
+        args << m_echoscpLogCfgFile;
+        Global::replaceLogLevel(m_echoscpLogCfgFile, getLogLevel());
+#elif Q_OS_WIN
+        args << "-ll";
+        args << getLogLevel();
+#else
+#endif
+
+        QString parameter("## parameter: ");
+        parameter += m_program;
+        for (auto& arg : args) {
             parameter += ' ';
             parameter += arg;
         }
         appendOutputText(parameter);
         appendOutputText("");
 
-        m_process->start(program, args);
+        m_process->start(m_program, args);
     }
 }
 void EchoStoreSCP::stop()
@@ -144,19 +157,20 @@ QString EchoStoreSCP::getOutputText()
 
 void EchoStoreSCP::saveSettings()
 {
-    Settings::saveEchoStoreSCPSettings(getSettings());
+    Global::Settings::saveEchoStoreSCPSettings(getSettings());
 }
 
-void EchoStoreSCP::setSettings(const EchoStoreSCPSettings& set)
+void EchoStoreSCP::setSettings(const Global::EchoStoreSCPSettings& set)
 {
     ui.lineEditAETitle->setText(set.aeTitle);
     ui.lineEditPort->setText(set.port);
     ui.lineEditLogLevel->setText(set.logLevel);
     setOutputDir(set.outputDir);
 }
-EchoStoreSCPSettings EchoStoreSCP::getSettings() const
+
+Global::EchoStoreSCPSettings EchoStoreSCP::getSettings() const
 {
-    EchoStoreSCPSettings set;
+    Global::EchoStoreSCPSettings set;
     set.aeTitle = ui.lineEditAETitle->text();
     set.port = ui.lineEditPort->text();
     set.logLevel = ui.lineEditLogLevel->text();

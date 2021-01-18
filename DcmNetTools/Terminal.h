@@ -46,6 +46,6 @@ private:
 
     QProcess*   m_process;
     QList<QString> m_cmdRecord;
-    std::size_t m_recordIndex;
+    int m_recordIndex;
     bool m_startFlag;
 };

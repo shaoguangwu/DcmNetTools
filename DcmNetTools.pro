@@ -1,12 +1,6 @@
-QT += core gui widgets sql multimedia multimediawidgets
+QT += core gui widgets
 
 CONFIG += c++17
-
-include($$PWD/../pri/common.pri)
-include($$PWD/../pri/importlib.pri)
-
-INCLUDEPATH += $$PWD/../navigation-system-lib
-DEPENDPATH += $PWD/../navigation-system-lib
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.

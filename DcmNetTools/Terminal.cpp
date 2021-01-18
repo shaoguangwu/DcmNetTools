@@ -28,9 +28,6 @@ Terminal::Terminal(QWidget *parent)
     connect(m_process, SIGNAL(readyReadStandardError()), this, SLOT(onProcessReadyRead()));
     connect(m_process, SIGNAL(stateChanged(QProcess::ProcessState)), 
         this, SLOT(onProcessStateChanged(QProcess::ProcessState)));
-    connect(m_process, &QProcess::started, this, [this](){
-        qDebug() << "started";
-    });
 #if defined(Q_OS_WIN)
 //    m_process->setWorkingDirectory(QCoreApplication::applicationDirPath() + "\\bin\\win32");
 #elif defined(Q_OS_LINUX)

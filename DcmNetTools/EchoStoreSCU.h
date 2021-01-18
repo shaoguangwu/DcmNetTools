@@ -59,5 +59,8 @@ private slots:
 private:
     Ui::EchoStoreSCU *ui;
     QProcess* m_process;
+    QString m_program;
 
+    QString m_echoscuLoggerCfgFile;
+    QString m_storescuLoggerCfgFile;
 };

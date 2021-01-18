@@ -3,6 +3,8 @@
 #include <QString>
 #include <QStringList>
 
+namespace Global {
+
 struct EchoStoreSCUSettings
 {
     QString aeTitle;
@@ -35,3 +37,8 @@ public:
 };
 
 QString applicationDirPath();
+QString configurePath();
+
+bool replaceLogLevel(const QString& logFile, const QString& logLevel);
+
+} // namespace Global
