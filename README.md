@@ -8,7 +8,7 @@ sudo apt install dcmtk
 
 将 scripts/*.sh 拷贝至可执行文件同目录，执行:  
 
-```
+```bash
 sh make-desktop.sh
 sudo sh install-desktop.sh
 ```
