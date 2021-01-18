@@ -4,6 +4,7 @@
 #include <QDateTime>
 #include <QMessageBox>
 #include <QDesktopServices>
+#include <QDebug>
 
 Terminal::Terminal(QWidget *parent)
     : QWidget(parent)
@@ -27,7 +28,15 @@ Terminal::Terminal(QWidget *parent)
     connect(m_process, SIGNAL(readyReadStandardError()), this, SLOT(onProcessReadyRead()));
     connect(m_process, SIGNAL(stateChanged(QProcess::ProcessState)), 
         this, SLOT(onProcessStateChanged(QProcess::ProcessState)));
-    m_process->setWorkingDirectory(QDir::currentPath() + "\\bin\\");
+    connect(m_process, &QProcess::started, this, [this](){
+        qDebug() << "started";
+    });
+#if defined(Q_OS_WIN)
+//    m_process->setWorkingDirectory(QCoreApplication::applicationDirPath() + "\\bin\\win32");
+#elif defined(Q_OS_LINUX)
+    m_process->setWorkingDirectory(QCoreApplication::applicationDirPath() + "/bin/linux");
+#else
+#endif
     start();
 }
 
@@ -39,7 +48,13 @@ Terminal::~Terminal()
 bool Terminal::start()
 {
     m_startFlag = true;
-    m_process->start("cmd");
+#if defined(Q_OS_WIN)
+    m_process->start("bash", QStringList());
+#elif defined(Q_OS_LINUX)
+    m_process->start("bash", QStringList());
+#else
+    return false;
+#endif
     return m_process->waitForStarted();
 }
 bool Terminal::stop()
@@ -75,7 +90,12 @@ void Terminal::onBtnEnetrClicked()
         appendCmdRecord(cmd);
     }
     appendLineFeedsToCmd(cmd);
+#ifdef Q_OS_WIN
     m_process->write(cmd.toLocal8Bit());
+#elif defined(Q_OS_LINUX)
+    m_process->write(cmd.toLocal8Bit());
+#else
+#endif
     ui.lineEdit->clear();
 }
 

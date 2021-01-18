@@ -11,7 +11,7 @@
 #include <QDebug>
 #include <QDesktopServices>
 
-#include "Settings.h"
+#include "Global.h"
 #include <QValidator> 
 
 EchoStoreSCP::EchoStoreSCP(QWidget *parent)
@@ -76,7 +76,13 @@ void EchoStoreSCP::setOutputDir(const QString& text)
 void EchoStoreSCP::start()
 {
     if (m_process->state() == QProcess::NotRunning) {
-        QString program = "bin/storescp.exe";
+#if defined(Q_OS_LINUX)
+        QString program = QCoreApplication::applicationDirPath() + "/bin/linux/storescp";
+#elif defined(Q_OS_WIN)
+        QString program = QCoreApplication::applicationDirPath() + "/bin/win32/storescp.exe";
+#else
+        return;
+#endif
         if (!QFile::exists(program)) {
             QMessageBox::warning(this, tr("Error"), tr("Can not find \"storescp\""));
             return;

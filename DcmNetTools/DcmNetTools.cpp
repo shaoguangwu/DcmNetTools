@@ -24,9 +24,11 @@ void DcmNetTools::initUI()
     ui.tabWidget->addTab(m_echoStoreSCP, tr("EchoStoreSCP"));
     ui.tabWidget->setTabIcon(1, QIcon(":/DcmNetTools/image/server.png"));
 
+#if defined(Q_OS_WIN)
     m_terminal = new Terminal(this);
     ui.tabWidget->addTab(m_terminal, tr("Terminal"));
     ui.tabWidget->setTabIcon(2, QIcon(":/DcmNetTools/image/terminal.png"));
+#endif
 }
 
 void DcmNetTools::closeEvent(QCloseEvent* event)

@@ -2,7 +2,7 @@
 
 #include <QWidget>
 #include "ui_EchoStoreSCP.h"
-#include "Settings.h"
+#include "Global.h"
 #include <QProcess>
 
 class EchoStoreSCP : public QWidget

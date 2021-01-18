@@ -26,7 +26,7 @@
        <item>
         <widget class="QLabel" name="label_7">
          <property name="text">
-          <string>State    :</string>
+          <string>State        :</string>
          </property>
         </widget>
        </item>
@@ -40,14 +40,14 @@
           </font>
          </property>
          <property name="text">
-          <string>AE Title :</string>
+          <string>SCU AE Title :</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="label_8">
          <property name="text">
-          <string>Log Level:</string>
+          <string>Log Level    :</string>
          </property>
         </widget>
        </item>
@@ -61,7 +61,7 @@
           </font>
          </property>
          <property name="text">
-          <string>SCP IP   :</string>
+          <string>SCP IP       :</string>
          </property>
         </widget>
        </item>
@@ -75,7 +75,7 @@
           </font>
          </property>
          <property name="text">
-          <string>SCP Port :</string>
+          <string>SCP Port     :</string>
          </property>
         </widget>
        </item>
@@ -91,7 +91,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEditAeTitle"/>
+        <widget class="QLineEdit" name="lineEditAeTitle">
+         <property name="text">
+          <string>EchoStoreSCU</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QLineEdit" name="lineEditLogLevel">
@@ -124,7 +128,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Files    :</string>
+          <string>Files        :</string>
          </property>
         </widget>
        </item>
@@ -152,7 +156,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Dir      :</string>
+          <string>Dir          :</string>
          </property>
         </widget>
        </item>
@@ -175,7 +179,7 @@
      <item>
       <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>Log      :</string>
+        <string>Log          :</string>
        </property>
       </widget>
      </item>

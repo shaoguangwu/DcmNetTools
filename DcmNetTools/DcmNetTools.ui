@@ -51,7 +51,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Made by Shaoguang. V1.3  </string>
+      <string>Made by Shaoguang. V1.4  </string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -61,8 +61,6 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources>
-  <include location="DcmNetTools.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

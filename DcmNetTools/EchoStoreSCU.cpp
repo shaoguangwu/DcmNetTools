@@ -12,7 +12,7 @@
 #include <QDebug>
 #include <QDesktopServices>
 
-#include "Settings.h"
+#include "Global.h"
 #include <QValidator> 
 
 EchoStoreSCU::EchoStoreSCU(QWidget *parent)
@@ -239,7 +239,7 @@ void EchoStoreSCU::onBtnChooseDirClicked()
 
 void EchoStoreSCU::onBtnSaveOutputToFileClicked()
 {
-    QString logDir = QDir::currentPath() + "/log/";
+    QString logDir = QCoreApplication::applicationDirPath() + "/log/";
     QDir dir;
     dir.mkdir(logDir);
     QDateTime dt = QDateTime::currentDateTime();
@@ -267,7 +267,13 @@ void EchoStoreSCU::onBtnSaveOutputToFileClicked()
 void EchoStoreSCU::onBtnEchoClicked()
 {
     killProcess();
-    QString program = "bin/echoscu.exe";
+#if defined(Q_OS_LINUX)
+    QString program = QCoreApplication::applicationDirPath() + "/bin/linux/echoscu";
+#elif defined(Q_OS_WIN)
+    QString program = QCoreApplication::applicationDirPath() + "/bin/win32/echoscu.exe";
+#else
+    return;
+#endif
     if (!QFile::exists(program)) {
         QMessageBox::warning(this, tr("Error"), tr("Can not find \"echoscu\""));
         return;
