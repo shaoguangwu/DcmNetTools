@@ -4,7 +4,7 @@
 # echo "scriptPath3: "$(dirname $(readlink -f $0))
 # echo "scriptPath4: "$(cd $(dirname ${BASH_SOURCE:-$0});pwd)
 
-SCRIPT_PATH=$(cd `dirname $0`; pwd)
+SCRIPT_PATH=$(dirname $(readlink -f $0))
 DESKTOP_FILE=$SCRIPT_PATH/dcmnettools.desktop
 
 # delete file and remake it.
